@@ -3,17 +3,17 @@ pipeline {
      stages {
         stage("Build") {
             steps {
-                sh "npm install"
-                sh "npm run build"
+                sh "yarn install"
+                sh "yarn run build"
             }
         }
 
         stage("Test") {
             steps {
-                sh "npm test"
+                sh "yarn test"
             }
         }
-        stage('Deliver') {
+         stage('Deliver') {
             steps {
                 sh "./jenkins/scripts/deliver.sh"
                 input message: 'Finished using the web site? (Click "Proceed" to continue)'
@@ -21,10 +21,5 @@ pipeline {
             }
         }
      }
-     post {
-        always {
-      sh 'npm stop'
-    }
-}
 }
         
