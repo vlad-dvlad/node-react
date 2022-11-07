@@ -1,20 +1,15 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:6-alpine'
-            args '-p 3000:3000'
-        }
+  agent any
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '5'))
+  }
+  stages {
+    stage('Build') {
+      steps {
+        sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+      }
     }
-     environment {
-            CI = 'true'
-        }
-    stages {
-        stage('Build') {
-            steps {
-                sh 'npm install'
-            }
-        }
-        stage('Test') {
+    stage('Test') {
                     steps {
                         sh './jenkins/scripts/test.sh'
                     }
@@ -26,6 +21,10 @@ pipeline {
                                 sh './jenkins/scripts/kill.sh'
                             }
                         }
-
+  }
+  post {
+    always {
+      sh 'docker logout'
     }
+  }
 }
